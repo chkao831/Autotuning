@@ -1,7 +1,7 @@
 param_grid = {'relaxation: damping factor': list(np.arange(0.8, 1.8, 0.1).round(decimals=2)),
               'relaxation: sweeps': list(np.arange(1, 4, 1))}
 --timeout 60
-$ python autotune.py input_albany_Velocity_MueLu_Wedge_Tune.yaml
+chkao831@icme-gpu:~/ali-perf-tests/build/perf_tests/humboldt-3-20km$ python3 autotune.py input_albany_Velocity_MueLu_Wedge_Tune.yaml
 
 Total #Iterations: 30
 {'relaxation: damping factor': 0.9, 'relaxation: sweeps': 1}: Time = 12.4741 sec
