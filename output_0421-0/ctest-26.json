@@ -1,0 +1,14 @@
+{
+  "humboldt-3-20km_vel_mu_wdg_tune_np12": {
+    "Albany cxx compiler": "GNU 7.2.0", 
+    "Albany git branch": "master", 
+    "Albany git commit id": "4d1cf0f", 
+    "Simulation start time": "11:49:16", 
+    "Trilinos git commit id": "8e46ee67", 
+    "case": "humboldt-3-20km_vel_mu_wdg_tune", 
+    "date": 26, 
+    "np": 12, 
+    "passed": false, 
+    "timers": {}
+  }
+}

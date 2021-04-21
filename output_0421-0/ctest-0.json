@@ -1,0 +1,26 @@
+{
+  "humboldt-3-20km_vel_mu_wdg_tune_np12": {
+    "Albany cxx compiler": "GNU 7.2.0", 
+    "Albany git branch": "master", 
+    "Albany git commit id": "4d1cf0f", 
+    "Simulation start time": "11:40:22", 
+    "Trilinos git commit id": "8e46ee67", 
+    "case": "humboldt-3-20km_vel_mu_wdg_tune", 
+    "date": 0, 
+    "np": 12, 
+    "passed": true, 
+    "timers": {
+      "Albany Fill: Jacobian:": 7.64889, 
+      "Albany Fill: Residual:": 1.44798, 
+      "Albany Jacobian Fill: Evaluate:": 6.93162, 
+      "Albany Jacobian Fill: Export:": 0.553623, 
+      "Albany Residual Fill: Evaluate:": 1.25071, 
+      "Albany Residual Fill: Export:": 0.112695, 
+      "Albany Total Time:": 13.3681, 
+      "Albany: Setup Time:": 0.556355, 
+      "Albany: Total Fill Time:": 9.09811, 
+      "NOX Total Linear Solve:": 2.66002, 
+      "NOX Total Preconditioner Construction:": 0.671742
+    }
+  }
+}
