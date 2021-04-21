@@ -1,0 +1,37 @@
+param_grid = {'relaxation: damping factor': list(np.arange(0.8, 1.8, 0.1).round(decimals=2)),
+              'relaxation: sweeps': list(np.arange(1, 4, 1))}
+--timeout 60
+$ python autotune.py input_albany_Velocity_MueLu_Wedge_Tune.yaml
+
+Total #Iterations: 30
+{'relaxation: damping factor': 0.9, 'relaxation: sweeps': 1}: Time = 12.4741 sec
+{'relaxation: damping factor': 1.0, 'relaxation: sweeps': 1}: Time = 12.8469 sec
+{'relaxation: damping factor': 0.8, 'relaxation: sweeps': 2}: Time = 13.0221 sec
+{'relaxation: damping factor': 1.1, 'relaxation: sweeps': 2}: Time = 13.1581 sec
+{'relaxation: damping factor': 1.2, 'relaxation: sweeps': 2}: Time = 13.2568 sec
+{'relaxation: damping factor': 0.8, 'relaxation: sweeps': 1}: Time = 13.3681 sec
+{'relaxation: damping factor': 1.0, 'relaxation: sweeps': 2}: Time = 13.3811 sec
+{'relaxation: damping factor': 1.1, 'relaxation: sweeps': 3}: Time = 13.6114 sec
+{'relaxation: damping factor': 0.9, 'relaxation: sweeps': 2}: Time = 13.6135 sec
+{'relaxation: damping factor': 0.9, 'relaxation: sweeps': 3}: Time = 13.6724 sec
+{'relaxation: damping factor': 0.8, 'relaxation: sweeps': 3}: Time = 13.6826 sec
+{'relaxation: damping factor': 1.1, 'relaxation: sweeps': 1}: Time = 13.8355 sec
+{'relaxation: damping factor': 1.2, 'relaxation: sweeps': 3}: Time = 13.9368 sec
+{'relaxation: damping factor': 1.0, 'relaxation: sweeps': 3}: Time = 13.969 sec
+{'relaxation: damping factor': 1.2, 'relaxation: sweeps': 1}: Time = 14.0158 sec
+{'relaxation: damping factor': 1.3, 'relaxation: sweeps': 3}: Time = 14.4119 sec
+{'relaxation: damping factor': 1.3, 'relaxation: sweeps': 1}: Time = 14.4334 sec
+{'relaxation: damping factor': 1.3, 'relaxation: sweeps': 2}: Time = 14.6535 sec
+{'relaxation: damping factor': 1.4, 'relaxation: sweeps': 2}: Time = 16.6322 sec
+{'relaxation: damping factor': 1.4, 'relaxation: sweeps': 3}: Time = 17.473 sec
+{'relaxation: damping factor': 1.4, 'relaxation: sweeps': 1}: Time = 19.0251 sec
+{'relaxation: damping factor': 1.5, 'relaxation: sweeps': 3}: Time = 26.6477 sec
+{'relaxation: damping factor': 1.5, 'relaxation: sweeps': 2}: Time = 29.8537 sec
+{'relaxation: damping factor': 1.5, 'relaxation: sweeps': 1}: Time = 36.4446 sec
+=================================Failed Cases=================================
+{'relaxation: damping factor': 1.6, 'relaxation: sweeps': 1}: Time = inf sec
+{'relaxation: damping factor': 1.6, 'relaxation: sweeps': 2}: Time = inf sec
+{'relaxation: damping factor': 1.6, 'relaxation: sweeps': 3}: Time = inf sec
+{'relaxation: damping factor': 1.7, 'relaxation: sweeps': 1}: Time = inf sec
+{'relaxation: damping factor': 1.7, 'relaxation: sweeps': 2}: Time = inf sec
+{'relaxation: damping factor': 1.7, 'relaxation: sweeps': 3}: Time = inf sec
