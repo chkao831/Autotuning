@@ -13,6 +13,7 @@ import glob
 import json
 import numpy as np
 import os
+import pandas as pd
 import subprocess
 import sys
 from sklearn.model_selection import ParameterGrid
@@ -84,8 +85,8 @@ def grid_search(inFile):
     paramList = muDict['Factories']['mySmoother1']['ParameterList']
     
     # Define Grid: np.arange(start[inclusive], stop[exclusive], step)
-    param_grid = {'relaxation: damping factor': list(np.arange(0.8, 1.8, 0.1).round(decimals=2)),
-                  'relaxation: sweeps': list(np.arange(1, 4, 1))
+    param_grid = {'relaxation: damping factor': list(np.arange(0.4, 1.8, 0.1).round(decimals=2)),
+                  'relaxation: sweeps': list(np.arange(1, 5, 1))
                  # add more params here to tune if applicable
                  }
     grid = ParameterGrid(param_grid)
@@ -117,6 +118,7 @@ def json_timers(filenames, case):
     Returns:
         iter_time_dict(dictionary): {#iter:Albany_Total_Time}
     '''
+    print("CASE: ", case)
     iter_time_dict = dict()
     for each_file in filenames:
         with open(each_file) as f:
@@ -140,13 +142,35 @@ def get_casename(yamlfile):
     Returns:
         extract(string): corresponding casename
     '''
+    target = ''
     with open('CTestTestfile.cmake', 'r') as f:
-        data = f.read()
-        matched_line = [line for line in data.split('\n') if (yamlfile in line) and (line.startswith("add_test"))]
-        extract = matched_line[0].split(' ')[0]
-        extract = extract[9:] # truncate out "add_test("
+        for line in f:
+            if (line.startswith("add_test")) and (yamlfile in line):
+                target = next(f)
+                break
+        extract = target.split(' ')[0]
+        extract = extract[21:]
+    print("CASENAME:", extract)
     return extract
 
+def dict_to_pandas(param_dict, time_dict):
+    '''
+    Merge two dictionaries (params/time) into one pandas dataframe
+    Parameters:
+        param_dict(dictionary): {#iter:{parameter_to_change:new_value}}
+        time_dict(dictionary): {#iter:Albany_Total_Time}
+    Returns:
+        df(dataframe): pandas dataframe
+    '''
+    for key, val in param_dict.items():
+        param_dict[key]['time'] = time_dict[key]
+    sorted_dict = sorted(param_dict.items(), key = lambda val: (val[1]["time"]))
+    list_to_pd = list()
+    for sorted_dic in sorted_dict:
+        list_to_pd.append(sorted_dic[1])
+    # print(list_to_pd)
+    df = pd.DataFrame.from_dict(list_to_pd)
+    return df
 ###################################################################################################
 if __name__ == "__main__":
     '''
@@ -156,8 +180,8 @@ if __name__ == "__main__":
         print('Usage: python autotune.py <yaml_file>')
         sys.exit(2)
     yaml_filename = sys.argv[1]
+    print("YAML FILENAME: ", yaml_filename)
     casename = get_casename(yaml_filename)
-
     # remove previously-generated files: Tune_*.yaml, *.log, ctest-*.json from this directory
     previous_yaml = yaml_filename.split('.')[0] + str("_*.yaml")
     prev_yaml = glob.glob(previous_yaml, recursive=False) #input_albany_Velocity_MueLu_Wedge_Tune_*.yaml 
@@ -175,11 +199,8 @@ if __name__ == "__main__":
     out_filename = glob.glob('ctest-*.json')
     iter_time_dict = json_timers(out_filename,casename)
     # get parameters with corresponding time in ascending order
-    merged = [iter_param_dict, iter_time_dict]
-    param_time_dict = {}
-    for k in iter_param_dict.keys():
-        param_time_dict[k] = tuple(param_time_dict[k] for param_time_dict in merged)
-    sorted_dic = dict(sorted(param_time_dict.items(), key = lambda item: item[1][1]))
-    # print results to command line
-    for pair in sorted_dic.items():
-       print('{0}: Time = {1} sec'.format(pair[1][0], pair[1][1]))
+    pd_output = dict_to_pandas(iter_param_dict, iter_time_dict)
+    print(pd_output)
+    csv_out_str = os.path.splitext(yaml_filename)[0] + str('.csv')
+    # print(csv_out_str)
+    pd_output.to_csv(csv_out_str, index=False)
