@@ -2,7 +2,7 @@
 
 ## Apr 21 Update
 #### Preliminary grid search implementation done:
-Handled failed cases with timeout; Conducted Numerical post-processing<br />
+Handled failed cases with timeout; Conducted numerical post-processing<br />
 Command line results are stored at current_output.log under the output_0421-0 folder
 
 ## Apr 27 Update
