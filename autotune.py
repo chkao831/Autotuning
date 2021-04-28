@@ -7,6 +7,7 @@
 
 # Need: pip install --user ruamel.yaml
 # Need: pip install --user scikit-learn
+# Need: pip install --user pandas
 
 # Import libraries
 import glob
