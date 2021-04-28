@@ -2,7 +2,8 @@
 
 ## Apr 21 Update
 #### Preliminary grid search implementation done:
-* Handled failed cases with timeout; Conducted numerical post-processing<br />
+* Conducted numerical post-processing<br />
+* Handled failed cases with timeout<br />
 * Command line results are stored at `current_output.log` under the `output_0421-0` folder
 
 ## Apr 27 Update
@@ -13,4 +14,5 @@
 * Partial results are stored under the `output_0427-X` folders<br />
 
 ## \#TODO
-#### Plotting
+* Plotting (midterm)<br />
+* Random Search (Week 6)<br />
