@@ -14,4 +14,5 @@
 * Meshgrid plots for midterm presentation -- codes/images are uploaded to folder `colormap`
 
 ## \#TODO
+* Try to run multiple samples and compute a mean of the output quantity to reduce noise.<br />
 * Random Search (Week 6)<br />
