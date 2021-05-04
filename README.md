@@ -29,7 +29,7 @@ optional arguments:
   -s SIMULATIONS, --simulations SIMULATIONS
                         Number of sampled simulations [Default=1]
 ```
-The `filename` argument is required, in yaml format.<br />
+The `filename` argument is *required*, in yaml format.<br />
 The default #simulation(s) is 1, which is an *optional* argument as illustrated above. <br />
 To run multiple samples, say 3, do
 ```
@@ -53,13 +53,12 @@ Populated mesh already exists!
 ############SIMULATION 2############
 ...(omitted)
 
-Total Test time (real) =  14.21 sec
 Total #iterations (cases): 2
    relaxation: damping factor  relaxation: sweeps     time
 0                         0.8                   1  12.6317
 1                         0.9                   1  13.1844
 ```
-where the resulting time above (12.6317, 13.1844, etc) illustrate the average of the 3 simulations (rounded to 4 digits). 
+where the resulting time above (`12.6317, 13.1844,` etc.) illustrate the average of all 3 simulations (rounded to 4 digits). 
 
 ## \#TODO
 * Random Search (Week 6)<br />
