@@ -16,49 +16,67 @@
 ## May 4 Update
 * Can now run grid search with multiple samples and compute a mean of the output quantity to reduce noise.<br />
 
+## May 5 Update
+* Random Search is able to run. <br />
 The `autotune.py` is now equipped with usages as follows:
 ```
 $ python autotune.py --help
-usage: autotune.py [-h] [-s SIMULATIONS] filename
+usage: autotune.py [-h] filename search
 
 positional arguments:
-  filename              YAML input filename
+  filename    YAML input filename (.yaml)
+  search      searching algorithm (grid/random)
+```
+The `filename` argument in yaml format is *required*.<br />
+The `search` type is *required*, either `grid` or `random`.<br />
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -s SIMULATIONS, --simulations SIMULATIONS
-                        Number of sampled simulations [Default=1]
+### Grid Search
 ```
-The `filename` argument is *required*, in yaml format.<br />
-The default #simulation(s) is 1, which is an *optional* argument as illustrated above. <br />
-To run multiple samples, say 3, do
+$ python autotune.py input_albany_Velocity_MueLu_Wedge_Tune.yaml grid
 ```
-$ python autotune.py input_albany_Velocity_MueLu_Wedge_Tune.yaml -s 3
-
-```
-Then the output would be generated as follows,
+The following messages would be printed,
 ```
 YAML INPUT FILENAME:  input_albany_Velocity_MueLu_Wedge_Tune.yaml
-NUM OF SIMULATION(s):  3
+SEARCHING ALGORITHM:  grid
 CASENAME: humboldt-3-20km_vel_mu_wdg_tune_np12
-
-
-############SIMULATION 0############
-Populated mesh already exists!
-...(omitted)
-
-############SIMULATION 1############
-...(omitted)
-
-############SIMULATION 2############
-...(omitted)
-
-Total #iterations (cases): 2
-   relaxation: damping factor  relaxation: sweeps     time
-0                         0.8                   1  12.6317
-1                         0.9                   1  13.1844
+#SIMULATIONS (integer>=1):
 ```
-where the resulting time above (`12.6317, 13.1844,` etc.) illustrate the average of all 3 simulations (rounded to 4 digits). 
+where the last line `#SIMULATIONS (integer>=1):` requires user input to enter the number of simulations (rounds) to be run. This could be any natural number.<br />
+
+Upon the end of run, the resulting table would be printed to command line (and stored to csv file). For example,
+```
+######### TOTAL NUM OF CASES IN EACH SIMULATION: 2 #########
+################### END OF SIMULATION 1 ###################
+
+   relaxation: damping factor  relaxation: sweeps     time
+0                         0.9                   1  12.6708
+1                         0.8                   1  12.8531
+
+```
+where the resulting time above (`12.6708, 12.8531,` etc.) illustrate the median of all simulations of the same case (rounded to 4 digits). 
+
+### Random Search
+```
+$ python autotune.py input_albany_Velocity_MueLu_Wedge_Tune.yaml random
+```
+The following messages would be printed,
+```
+YAML INPUT FILENAME:  input_albany_Velocity_MueLu_Wedge_Tune.yaml
+SEARCHING ALGORITHM:  random
+CASENAME: humboldt-3-20km_vel_mu_wdg_tune_np12
+#RANDOM SEARCH #ITERS (integer>=1):
+```
+where the last line `#RANDOM SEARCH #ITERS (integer>=1):` requires user input to enter the number of cases to be randomly generated and run. This could be any natural number.<br />
+
+Upon the end of run, the resulting table would be printed to command line (and stored to csv file). For example,
+```
+######### TOTAL NUM OF CASES: 2 #########
+   relaxation: damping factor  relaxation: sweeps     time
+0                    0.972714                   1  12.3668
+1                    1.085231                   1  12.5056
+```
+where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany Total Time for each sampled case (rounded to 4 digits). 
 
 ## \#TODO
-* Random Search (Week 6)<br />
+* GPU Run<br />
+* Research on some advanced optimizations<br />
