@@ -86,7 +86,7 @@ def run_sim(iter, inFile):
 ###############################################################################
 def grid_search(inFile, simu):
     '''
-    Run multiple sims with parameter grid -- Grid Search. 
+    Run experiment with parameter grid -- Grid Search. 
     Parameters:
         inFile(file): the input yaml file
         simu(integer): a nonneg integer that represents the current round of simulation
@@ -179,7 +179,7 @@ def get_truncated_expon(low=0.7, upp=1.4, sd=0.3):
 
 def random_search(inFile, n_iter, seed):
     '''
-    Run multiple sims with Random Search.
+    Run experiment with Random Search.
     Parameters:
         inFile(file): the input yaml file
         n_iter(integer): a nonneg integer that represents the current round of iteration
