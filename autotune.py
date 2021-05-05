@@ -31,11 +31,24 @@ yaml.preserve_quotes = True
 yaml.width = 1000
 
 def read_yaml(filename):
+    '''
+    Parse the input yaml file and generate a dictionary object.
+    Parameters: 
+        filename(string): input yaml filename
+    Returns:
+        dictionary(dictionary): dictionary from yaml
+    '''
     with open(filename) as file:
         dictionary = yaml.load(file)
     return dictionary
 
 def write_yaml(dictionary, filename):
+    '''
+    Accept a dictionary and produce a YAML document.
+    Parameters:
+        dictionary(dictionary): object to be dumped
+        filename(string): output yaml filename
+    '''
     with open(filename, 'w') as file:
         yaml.dump(dictionary, file)
         file.write('...\n')
@@ -43,13 +56,13 @@ def write_yaml(dictionary, filename):
 ###############################################################################
 def run_bash(command):
     '''
-    Run a bash command
+    Run a bash command.
     '''
     return subprocess.run(command, shell=True, executable='/bin/bash')
 
 def run_sim(iter, inFile):
     '''
-    Run yaml input file
+    Run yaml input file.
     Parameters:
         iter(integer): represents iteration
         inFile(file): the input yaml file
@@ -73,7 +86,7 @@ def run_sim(iter, inFile):
 ###############################################################################
 def grid_search(inFile, simu):
     '''
-    Run multiple sims with parameter grid.
+    Run multiple sims with parameter grid -- Grid Search. 
     Parameters:
         inFile(file): the input yaml file
         simu(integer): a nonneg integer that represents the current round of simulation
@@ -122,7 +135,7 @@ def grid_search(inFile, simu):
 
 def get_time_gridsearch(filenames, case, simu, iter_time_dict):
     '''
-    Return a dictionary with time extracted from the output json files
+    Return a dictionary with time extracted from the output json files.
     Parameters:
         filenames(list): a list that contains ctest-*.json in this directory
         case(string): a string that represents the targeted casename from output
@@ -166,6 +179,7 @@ def get_truncated_expon(low=0.7, upp=1.4, sd=0.3):
 
 def random_search(inFile, n_iter, seed):
     '''
+    Run multiple sims with Random Search.
     Parameters:
         inFile(file): the input yaml file
         n_iter(integer): a nonneg integer that represents the current round of iteration
@@ -223,7 +237,7 @@ def random_search(inFile, n_iter, seed):
 
 def get_time_randomsearch(filenames, case):
     '''
-    Return a dictionary with time extracted from the output json files
+    Return a dictionary with time extracted from the output json files.
     Parameters:
         filenames(list): a list that contains ctest-*.json in this directory
         case(string): a string that represents the targeted casename from output
@@ -250,7 +264,7 @@ def get_time_randomsearch(filenames, case):
 ###############################################################################
 def get_casename(yamlfile):
     '''
-    Get the corresponding casename from cmake file to minimize hardcoding
+    Get the corresponding casename from cmake file to minimize hardcoding.
     Parameters: 
         yamlfile(string): input yaml filename
     Returns:
@@ -310,7 +324,7 @@ def remove_files(yaml_filename):
 ###############################################################################
 if __name__ == "__main__":
     '''
-    Run experiments
+    Run experiments.
     '''
     yaml_filename = str()
   
