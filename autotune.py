@@ -47,7 +47,6 @@ def run_bash(command):
     '''
     return subprocess.run(command, shell=True, executable='/bin/bash')
 
-###################################################################################################
 def run_sim(iter, inFile):
     '''
     Run yaml input file
@@ -114,10 +113,10 @@ def random_search(inFile, n_iter):
     ite = 0
     iter_param_dict = dict()
     for params in sampler:
+        print('\n')
+        print("############ CASE {} ############".format(ite))
         # Change parameter
         for key, value in params.items():
-            #print(type(value))
-            #print(value)
             
             if key in paramList: 
                 #print(type(value))
@@ -127,17 +126,42 @@ def random_search(inFile, n_iter):
                 print(value)
                 paramList[key] = value
             
-                #print(paramList[key])
         iter_param_dict.update({str(ite):params})
         # Write input file
         write_yaml(inputDict, inFile)
         run_sim(ite, inFile)
         ite = ite + 1
-    print('#######Total #iterations (cases): {}#######'.format(ite))
+    print('\n')
+    print('######### TOTAL NUM OF CASES: {} #########'.format(ite))
     run_bash('python ctest2json.py')
     return iter_param_dict
 
-def grid_search(inFile):
+def get_time_randomsearch(filenames, case):
+    '''
+    Return a dictionary with time from output json files
+    Parameters:
+        filenames(list): a list that contains ctest-*.json in this directory
+        case(string): a string that represents the targeted casename from output
+    Returns:
+        iter_time_dict(dictionary): {#iter:Albany_Total_Time}
+    '''
+    iter_time_dict = dict()
+    for each_file in filenames:
+        with open(each_file) as f:
+            dat = json.load(f)
+            # ensure the test passed to get timer -- otherwise set to arbitrary large
+            if dat.get(case, {}).get('passed') is True:
+                time = dat.get(case, {}).get('timers', {}).get('Albany Total Time:')
+            else:
+                time = float('inf')
+            # extract time value and add to dictionary
+            output_num = each_file.split('-')[-1]
+            output_num = os.path.splitext(output_num)[0]
+            iter_time_dict.update({output_num:time})
+    return iter_time_dict
+###################################################################################################
+
+def grid_search(inFile, simu):
     '''
     Run multiple sims with parameter grid.
     Parameters:
@@ -175,37 +199,15 @@ def grid_search(inFile):
         # Run yaml input file
         run_sim(ite, inFile)
         ite = ite + 1
-    print('Total #iterations (cases):', ite)
+    print('\n')
+    print('######### TOTAL NUM OF CASES IN EACH SIMULATION: {} #########'.format(ite))
+    print('################### END OF SIMULATION {} ###################'.format(simu))
     # Convert logs to json
     run_bash('python ctest2json.py')
     return iter_param_dict
 
-def old_json_timers(filenames, case):
-    '''
-    Return a dictionary with time from output json files
-    Parameters:
-        filenames(list): a list that contains ctest-*.json in this directory
-        case(string): a string that represents the targeted casename from output
-    Returns:
-        iter_time_dict(dictionary): {#iter:Albany_Total_Time}
-    '''
-    print("CASE: ", case)
-    iter_time_dict = dict()
-    for each_file in filenames:
-        with open(each_file) as f:
-            dat = json.load(f)
-            # ensure the test passed to get timer -- otherwise set to arbitrary large
-            if dat.get(case, {}).get('passed') is True:
-                time = dat.get(case, {}).get('timers', {}).get('Albany Total Time:')
-            else:
-                time = float('inf')
-            # extract time value and add to dictionary
-            output_num = each_file.split('-')[-1]
-            output_num = os.path.splitext(output_num)[0]
-            iter_time_dict.update({output_num:time})
-    return iter_time_dict
 
-def json_timers(filenames, case, ite, iter_time_dict):
+def get_time_gridsearch(filenames, case, ite, iter_time_dict):
     '''
     Return a dictionary with time from output json files
     Parameters:
@@ -214,7 +216,6 @@ def json_timers(filenames, case, ite, iter_time_dict):
     Returns:
         iter_time_dict(dictionary): {#iter:Albany_Total_Time}
     '''
-    #print("CASE: ", case)
     for each_file in filenames:
         with open(each_file) as f:
             dat = json.load(f)
@@ -234,6 +235,7 @@ def json_timers(filenames, case, ite, iter_time_dict):
             #iter_time_dict.update({output_num:time})
     return iter_time_dict
 
+###################################################################################################
 def get_casename(yamlfile):
     '''
     Get the corresponding casename from cmake file to minimize hardcoding
@@ -273,6 +275,21 @@ def dict_to_pandas(param_dict, time_dict):
     # print(list_to_pd)
     df = pd.DataFrame.from_dict(list_to_pd)
     return df
+
+def remove_files(yaml_filename):
+    '''
+    remove previously-generated files: Tune_*.yaml, *.log, ctest-*.json from this directory
+    '''
+    previous_yaml = yaml_filename.split('.')[0] + str("_*.yaml")
+    prev_yaml = glob.glob(previous_yaml, recursive=False) #input_albany_Velocity_MueLu_Wedge_Tune_*.yaml 
+    prev_log = glob.glob('*.log', recursive=False)
+    prev_ctest = glob.glob('ctest-*', recursive=False) 
+    for filePath in (prev_log + prev_yaml + prev_ctest): 
+        try:
+            os.remove(filePath)
+        except OSError:
+            print("Error while deleting file") 
+
 ###################################################################################################
 if __name__ == "__main__":
     '''
@@ -283,66 +300,38 @@ if __name__ == "__main__":
   
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", type=str,
-                    help="YAML input filename")
+                    help="YAML input filename (.yaml)")
     parser.add_argument("search", type=str,
-                    help="searching algorithm")
-    #parser.add_argument("-s", "--simulations", type=int,
-    #                help="Number of sampled simulations [Default=1]")
+                    help="searching algorithm (grid/random)")
     args = parser.parse_args()
     yaml_filename = args.filename
     algo = args.search
-    #if args.simulations:
-    #    num_simu = args.simulations
     print("YAML INPUT FILENAME: ", yaml_filename) 
     print("SEARCHING ALGORITHM: ", algo)
     casename = get_casename(yaml_filename)
-    #print("NUM OF SIMULATION(s): ", num_simu)
+
     if algo == "grid":
         num_simu = int(input("#SIMULATIONS (integer>=1): "))
         iter_time_dict = dict()
         for i in range(num_simu):
-            # remove previously-generated files: Tune_*.yaml, *.log, ctest-*.json from this directory
-            previous_yaml = yaml_filename.split('.')[0] + str("_*.yaml")
-            prev_yaml = glob.glob(previous_yaml, recursive=False) #input_albany_Velocity_MueLu_Wedge_Tune_*.yaml 
-            prev_log = glob.glob('*.log', recursive=False)
-            prev_ctest = glob.glob('ctest-*', recursive=False)
-            for filePath in (prev_log + prev_yaml + prev_ctest): 
-                try:
-                    os.remove(filePath)
-                except OSError:
-                    print("Error while deleting file")
+            remove_files(yaml_filename)
             # perform grid search
             print('\n')
-            print("############SIMULATION {}############".format(i))
-            iter_param_dict = grid_search(yaml_filename)
+            print("############ SIMULATION {} ############".format(i))
+            iter_param_dict = grid_search(yaml_filename, i)
             # post process: get timers from generated json files
             out_filename = glob.glob('ctest-*.json')
-            if i != 0:
-                iter_time_dict = json_timers(out_filename, casename, i, iter_time_dict)
-                # iter_time_dict = dict(Counter(old_dict)+Counter(new_dict))
-                print("ITER TIME DICT: ", iter_time_dict)
-            else: 
-                iter_time_dict = json_timers(out_filename, casename, i, iter_time_dict)
-                print("ITER TIME DICT: ", iter_time_dict)
-            #print("ITER_TIME_DICT: ", iter_time_dict)
-        iter_time_dict = {k: statistics.median(time_value_list) for k, time_value_list in iter_time_dict.items()}
+            iter_time_dict = get_time_gridsearch(out_filename, casename, i, iter_time_dict)
+            print("ITER TIME DICT: ", iter_time_dict)
+        iter_time_dict = {k: statistics.median(time_list) for k, time_list in iter_time_dict.items()}
         iter_time_dict = {k: round(iter_time_dict[k], 4) for k in iter_time_dict}
         print("FINAL: ", iter_time_dict)
-    else: 
-        # remove previously-generated files: Tune_*.yaml, *.log, ctest-*.json from this directory
-        previous_yaml = yaml_filename.split('.')[0] + str("_*.yaml")
-        prev_yaml = glob.glob(previous_yaml, recursive=False) #input_albany_Velocity_MueLu_Wedge_Tune_*.yaml
-        prev_log = glob.glob('*.log', recursive=False)
-        prev_ctest = glob.glob('ctest-*', recursive=False)
-        for filePath in (prev_log + prev_yaml + prev_ctest):
-            try:
-                os.remove(filePath)
-            except OSError:
-                print("Error while deleting file")
+    else:
+        remove_files(yaml_filename)
         num_randsearch = int(input("#RANDOM SEARCH #ITERS (integer>=1): "))
         iter_param_dict = random_search(yaml_filename, num_randsearch)
         out_filename = glob.glob('ctest-*.json')
-        iter_time_dict = old_json_timers(out_filename,casename)
+        iter_time_dict = get_time_randomsearch(out_filename,casename)
 
     # get parameters with corresponding time in ascending order
     pd_output = dict_to_pandas(iter_param_dict, iter_time_dict)
