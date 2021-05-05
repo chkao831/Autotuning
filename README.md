@@ -66,9 +66,9 @@ The following messages would be printed,
 YAML INPUT FILENAME:  input_albany_Velocity_MueLu_Wedge_Tune.yaml
 SEARCHING ALGORITHM:  random
 CASENAME: humboldt-3-20km_vel_mu_wdg_tune_np12
-#RANDOM SEARCH #ITERS (integer>=1):
+RANDOM SEARCH #ITERS (integer>=1):
 ```
-where the last line `#RANDOM SEARCH #ITERS (integer>=1):` requires user input to enter the number of cases to be randomly generated and run. This could be any natural number.<br />
+where the last line `RANDOM SEARCH #ITERS (integer>=1):` requires user input to enter the number of cases to be randomly generated and run. This could be any natural number.<br />
 
 Upon the end of run, the resulting table would be printed to command line (and stored to csv file). For example, say the user set \#ITERS to be 2, two cases would be randomly generated as follow, 
 ```
