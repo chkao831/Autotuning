@@ -70,7 +70,7 @@ RANDOM SEARCH #ITERS (integer>=1):
 ```
 where the last line `RANDOM SEARCH #ITERS (integer>=1):` requires a user input that specifies the number of cases to be randomly generated and run. This could be any natural number.<br />
 
-Then, the user needs to enter another value to specify the random seed for this experiment. This integer should fall between 0 and 2\*\*32, inclusive. 
+Then, the user needs to enter another value to specify the random seed for this experiment. This integer should fall between 0 and 2^32, inclusive. 
 ```
 RANDOM SEARCH SEED (0<=integer<=2**32):
 ```
