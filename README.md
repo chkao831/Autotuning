@@ -81,4 +81,5 @@ where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany 
 
 ## \#TODO
 * GPU Run<br />
+* Analyses on current searching algo<br />
 * Research on some advanced optimizations<br />
