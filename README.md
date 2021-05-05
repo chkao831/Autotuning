@@ -39,11 +39,11 @@ The following messages would be printed,
 YAML INPUT FILENAME:  input_albany_Velocity_MueLu_Wedge_Tune.yaml
 SEARCHING ALGORITHM:  grid
 CASENAME: humboldt-3-20km_vel_mu_wdg_tune_np12
-#SIMULATIONS (integer>=1):
+#ROUNDS OF SIMULATIONS (integer>=1):
 ```
-where the last line `#SIMULATIONS (integer>=1):` requires a user input that specifies the number of simulations (rounds) to be run. This could be any natural number.<br />
+where the last line `#ROUNDS OF SIMULATIONS (integer>=1):` requires a user input that specifies the number of simulations (rounds) to be run. This could be any natural number.<br />
 
-Upon the end of run, the resulting table would be printed to command line (and stored to csv file). For example, say the user set \#SIMULATIONS to be 2, there will be 2 identical runs for each unique case. 
+Upon the end of run, the resulting table would be printed to command line (and stored to csv file). For example, say the user set \#ROUNDS OF SIMULATIONS to be 2, there will be 2 identical runs for each unique case. 
 ```
 ######### TOTAL NUM OF CASES IN EACH SIMULATION: 4 #########
 ################### END OF SIMULATION 1 ###################
