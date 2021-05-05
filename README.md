@@ -18,6 +18,14 @@
 
 ## May 5 Update
 * Random Search is able to run. <br />
+
+### Prerequisites
+```
+pip install --user pandas
+pip install --user ruamel.yaml
+pip install --user scikit-learn
+```
+
 The `autotune.py` is now equipped with usages as follows:
 ```
 $ python autotune.py --help
