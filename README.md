@@ -83,7 +83,7 @@ Then, the user needs to enter another value to specify the random seed for this 
 RANDOM SEARCH SEED (0<=integer<=2**32):
 ```
 
-Upon the end of run, the resulting table  (ranked, in ascending order by time) would be printed to the command line (and stored to a csv file). For example, say the user set `#ITERS` to be 2, two cases would be randomly generated as follow, 
+Upon the end of run, the resulting table  (ranked, in ascending order by time) would be printed to the command line (and stored to a csv file). For example, say the user set `#ITERS` to be 2, two cases would be randomly generated as follows, 
 ```
 ################### TOTAL NUM OF CASES: 2 ##################
    relaxation: damping factor  relaxation: sweeps     time
