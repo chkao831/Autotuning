@@ -43,17 +43,19 @@ CASENAME: humboldt-3-20km_vel_mu_wdg_tune_np12
 ```
 where the last line `#SIMULATIONS (integer>=1):` requires user input to enter the number of simulations (rounds) to be run. This could be any natural number.<br />
 
-Upon the end of run, the resulting table would be printed to command line (and stored to csv file). For example,
+Upon the end of run, the resulting table would be printed to command line (and stored to csv file). For example, say the user set \#SIMULATIONS to be 2, there will be 2 identical runs for each unique case. 
 ```
-######### TOTAL NUM OF CASES IN EACH SIMULATION: 2 #########
+######### TOTAL NUM OF CASES IN EACH SIMULATION: 4 #########
 ################### END OF SIMULATION 1 ###################
 
    relaxation: damping factor  relaxation: sweeps     time
-0                         0.9                   1  12.6708
-1                         0.8                   1  12.8531
+0                         0.8                   1  12.7093
+1                         0.9                   1  12.8434
+2                         1.0                   1  12.8585
+3                         1.1                   1  13.2763
 
 ```
-where the resulting time above (`12.6708, 12.8531,` etc.) illustrate the median of all simulations of the same case (rounded to 4 digits). 
+where the resulting time above (`12.7093, 12.8434,` etc.) illustrate the **median** of all simulations of the same case (rounded to 4 digits). 
 
 ### Random Search
 ```
@@ -68,7 +70,7 @@ CASENAME: humboldt-3-20km_vel_mu_wdg_tune_np12
 ```
 where the last line `#RANDOM SEARCH #ITERS (integer>=1):` requires user input to enter the number of cases to be randomly generated and run. This could be any natural number.<br />
 
-Upon the end of run, the resulting table would be printed to command line (and stored to csv file). For example,
+Upon the end of run, the resulting table would be printed to command line (and stored to csv file). For example, say the user set \#ITERS to be 2, two cases would be randomly generated as follow, 
 ```
 ######### TOTAL NUM OF CASES: 2 #########
    relaxation: damping factor  relaxation: sweeps     time
