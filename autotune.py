@@ -1,5 +1,5 @@
-# Warning: The execution of this file will automatically remove *.log, 
-#          ctest-*.json and all auto-generated _[X].yaml files from this directory.
+# Warning: The execution of this file will automatically remove *.log, ctest-*.json,
+#          and all auto-generated [input_yaml]_[#iter_id].yaml files from this directory.
 #          Would potentially overwrite the original yaml file if the execution fails.
 
 # From Albany/tools - yaml read/write
@@ -78,7 +78,8 @@ def grid_search(inFile, simu):
         inFile(file): the input yaml file
         simu(integer): a nonneg integer that represents the current round of simulation
     Returns:
-        iter_param_dict(dictionary): {#iter:{parameter_to_change:new_value}}
+        iter_param_dict(dictionary): {#iter:{parameter_to_change:new_value}} where
+                                     #iter is the unique iter id for each experiment
     '''
     # Read input file
     inputDict = read_yaml(inFile)
@@ -98,7 +99,7 @@ def grid_search(inFile, simu):
     grid = ParameterGrid(param_grid)
     
     # Run simulations
-    ite = 0
+    ite = 0 # current #iter id
     iter_param_dict = dict()
     for params in grid:
         # Change parameter
@@ -126,12 +127,12 @@ def get_time_gridsearch(filenames, case, simu, iter_time_dict):
         filenames(list): a list that contains ctest-*.json in this directory
         case(string): a string that represents the targeted casename from output
         simu(integer): a nonneg integer that represents the current round of simulation
-        iter_time_dict(dictionary): a passed-in dictionary {#iter:list_of_Albany_Total_Time}
+        iter_time_dict(dictionary): a passed-in dictionary {#iter:list(Albany_Total_Time)}
                                     in which the list of time needs to be updated
     Returns:
-        iter_time_dict(dictionary): {#iter:list_of_Albany_Total_Time}
-                                    where each #iter represents a unique iter id
-                                    and the list of time is updated
+        iter_time_dict(dictionary): {#iter:list(Albany_Total_Time)} where
+                                    #iter is the unique iter id for each experiment
+                                    and the corresponding list of time is updated
     '''
     for each_file in filenames:
         with open(each_file) as f:
@@ -142,6 +143,7 @@ def get_time_gridsearch(filenames, case, simu, iter_time_dict):
             else:
                 time = float('inf')
             # extract time value and add to dictionary
+            # output_num is the current #iter id
             output_num = each_file.split('-')[-1]
             output_num = os.path.splitext(output_num)[0]
             if simu == 0: 
@@ -169,7 +171,8 @@ def random_search(inFile, n_iter, seed):
         n_iter(integer): a nonneg integer that represents the current round of iteration
         seed(integer): an integer between 0 and 2**32 - 1 inclusive
     Returns:
-        iter_param_dict(dictionary): {#iter:{parameter_to_change:new_value}}
+        iter_param_dict(dictionary): {#iter:{parameter_to_change:new_value}} where
+                                     #iter is the unique iter id for each experiment
     '''
     # Read input file
     inputDict = read_yaml(inFile)
@@ -181,7 +184,7 @@ def random_search(inFile, n_iter, seed):
     # Parameter to change
     paramList = muDict['Factories']['mySmoother1']['ParameterList']
 
-    # Define Random State with the Mersenne Twister pseudo-random number generator.
+    # Define Random State with the Mersenne Twister pseudo-random number generator
     random_state = np.random.RandomState(seed)
 
     DAMPING_FACTOR = get_truncated_normal()
@@ -195,7 +198,7 @@ def random_search(inFile, n_iter, seed):
                                n_iter=n_iter,
                                random_state=random_state)
     # Run simulations
-    ite = 0
+    ite = 0 # current #iter id
     iter_param_dict = dict()
     for params in sampler:
         print('\n')
@@ -210,6 +213,7 @@ def random_search(inFile, n_iter, seed):
         iter_param_dict.update({str(ite):params})
         # Write input file
         write_yaml(inputDict, inFile)
+        # Run yaml input file
         run_sim(ite, inFile)
         ite = ite + 1
     print('\n')
@@ -224,7 +228,8 @@ def get_time_randomsearch(filenames, case):
         filenames(list): a list that contains ctest-*.json in this directory
         case(string): a string that represents the targeted casename from output
     Returns:
-        iter_time_dict(dictionary): {#iter:Albany_Total_Time}
+        iter_time_dict(dictionary): {#iter:Albany_Total_Time} where
+                                    #iter is the unique iter id for each experiment
     '''
     iter_time_dict = dict()
     for each_file in filenames:
@@ -236,6 +241,7 @@ def get_time_randomsearch(filenames, case):
             else:
                 time = float('inf')
             # extract time value and add to dictionary
+            # output_num is the current #iter id 
             output_num = each_file.split('-')[-1]
             output_num = os.path.splitext(output_num)[0]
             iter_time_dict.update({output_num:time})
@@ -263,7 +269,9 @@ def get_casename(yamlfile):
 
 def dict_to_pandas(param_dict, time_dict):
     '''
-    Merge two dictionaries (params/time) into one pandas dataframe
+    Match and merge two dictionaries (params/time) into one pandas dataframe. 
+    The keys for each dictionary, #iter, represent the unique iter id's 
+    for each experiment.
     Parameters:
         param_dict(dictionary): {#iter:{parameter_to_change:new_value}}
         time_dict(dictionary): {#iter:Albany_Total_Time}
@@ -284,7 +292,7 @@ def dict_to_pandas(param_dict, time_dict):
 
 def remove_files(yaml_filename):
     '''
-    Remove previously-generated files: [inputyaml]_[num].yaml, *.log, ctest-*.json 
+    Remove previously-generated files: [input_yaml]_[#iter_id].yaml, *.log, ctest-*.json 
     from the current directory.
     Parameters:
         yaml_filename(string): the input yaml file name
@@ -332,7 +340,7 @@ if __name__ == "__main__":
             out_filename = glob.glob('ctest-*.json')
             iter_time_dict = get_time_gridsearch(out_filename, casename, i, iter_time_dict)
             #print("ITER TIME DICT: ", iter_time_dict)
-        # take median from all rounds
+        # take median of time from all rounds
         iter_time_dict = {k: statistics.median(time_list) for k, time_list in iter_time_dict.items()}
         # round final digits to 4
         iter_time_dict = {k: round(iter_time_dict[k], 4) for k in iter_time_dict}
