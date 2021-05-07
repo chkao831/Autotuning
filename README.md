@@ -97,5 +97,7 @@ where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany 
 
 ## \#TODO
 * Running experiments and testing codes on CPU/GPU<br />
+  * Start to record `NOX Total Linear Solve + NOX Total Preconditioner Construction` <br />
+  * Try out `inner damping factor` and `relaxation: type` across smoothers<br />
 * Analyses on current searching algo<br />
 * Research on some advanced optimizations<br />
