@@ -105,16 +105,21 @@ def grid_search(inFile, simu):
     paramList = muDict['Factories']['mySmoother1']['ParameterList']
     
     # Define Grid: np.arange(start[inclusive], stop[exclusive], step)
-    param_grid = {'relaxation: damping factor': list(np.arange(0.8, 1.1, 0.1).round(decimals=1)),
-                  'relaxation: sweeps': list(np.arange(1, 2, 1))
+    DAMPING_FACTOR = list(np.arange(0.8, 1.2, 0.002).round(decimals=3))
+    SWEEPS = list(np.arange(1, 2, 1))
+    param_grid = {'relaxation: damping factor': DAMPING_FACTOR,
+                  'relaxation: sweeps': SWEEPS
                  # add more params here to tune if applicable
                  }
     grid = ParameterGrid(param_grid)
+    print("TOTAL NUM OF CASES TO BE RUN: {}".format(len(list(grid))))
     
     # Run simulations
     ite = 0 # current #iter id
     iter_param_dict = dict()
     for params in grid:
+        print('\n')
+        print("########################## CASE {} ##########################".format(ite))
         # Change parameter
         for key, value in params.items():
             if key in paramList: 
@@ -165,7 +170,7 @@ def get_time_gridsearch(filenames, case, simu, iter_time_dict):
     return iter_time_dict
 
 ###############################################################################
-def get_truncated_normal(mean=1, sd=0.3, low=0.5, upp=1.5):
+def get_truncated_normal(mean=1, sd=0.1, low=0.8, upp=1.2):
     '''
     Generate a truncated normal continuous distribution with range.
     '''
@@ -203,7 +208,7 @@ def random_search(inFile, n_iter, seed):
 
     DAMPING_FACTOR = get_truncated_normal()
     #DAMPING_FACTOR = get_truncated_expon()
-    SWEEPS = list(range(1, 3))
+    SWEEPS = list(range(1, 2))
 
     param_distributions = {'relaxation: damping factor': DAMPING_FACTOR,
                            'relaxation: sweeps': SWEEPS}
