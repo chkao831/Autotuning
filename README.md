@@ -92,7 +92,10 @@ Upon the end of run, the resulting table  (ranked, in ascending order by time) w
 ```
 where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany Total Time for each sampled case (rounded to 4 digits). 
 
+## May 7 Update
+* GPU Build completed -- [Notes on Running Sample Tests Under Different Architectures](https://github.com/chkao831/Autotuning/blob/main/output/output_0507-notes/testing_architectures.md)<br />
+
 ## \#TODO
-* GPU Run<br />
+* Running experiments and testing codes on CPU/GPU<br />
 * Analyses on current searching algo<br />
 * Research on some advanced optimizations<br />
