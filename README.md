@@ -97,11 +97,19 @@ where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany 
 
 ## May 16 Update
 ### Multi-Smoother Grid Search
-* Multi-Smoother Grid Search Done -- [autotune.py](https://github.com/chkao831/Autotuning/blob/main/autotune.py)<br />
+* Multi-Smoother Grid Search Done ([autotune.py](https://github.com/chkao831/Autotuning/blob/main/autotune.py))<br />
+  * [Sample outputs](https://github.com/chkao831/Autotuning/tree/main/output/output_0516-0)<br />
   * Experiments are run on V100 GPU<br />
   * Performances are recorded by `NOX Total Linear Solve + NOX Total Preconditioner Construction`<br />
-* Now available options become `grid-single`, `grid-multi` and `random`, respectively indicate single-smoother grid search, multi-smoother grid search and single-smoother random search. <br />
-* For example,
+### Multi-Smoother Random Search
+* Multi-Smoother Random Search Done ([autotune.py](https://github.com/chkao831/Autotuning/blob/main/autotune.py))<br />
+  * Sample outputs<br />
+  * Experiments are run on V100 GPU<br />
+  * Performances are recorded by `NOX Total Linear Solve + NOX Total Preconditioner Construction`<br />
+ 
+* Now available options become `grid-single`, `grid-multi`, `random-single` and `random-multi`, respectively indicate single-smoother grid search, multi-smoother grid search, single-smoother random search and multi-smoother random search. <br />
+
+* For example, with the choice of `grid-multi` option, 
 ```
 $ python autotune.py input_albany_Velocity_MueLuKokkos_Wedge_Tune.yaml grid-multi
 
@@ -130,7 +138,33 @@ tune-gpu    =  48.87 sec*proc (1 test)
 
 Total Test time (real) =  48.91 sec
 ```
-### Multi-Smoother Random Search
+* With the choice of `random-multi` option, 
+```
+$ python autotune.py input_albany_Velocity_MueLuKokkos_Wedge_Tune.yaml random-multi
+YAML INPUT FILENAME:  input_albany_Velocity_MueLuKokkos_Wedge_Tune.yaml
+SEARCHING ALGORITHM:  random
+CASENAME: humboldt-3-20km_vel_muk_wdg_tune_np1
+RANDOM SEARCH #ITERS (integer>=1): 384
+RANDOM SEARCH SEED (0<=integer<=2**32): 2021
+
+
+########################## CASE 0 ##########################
+[mySmoother1]  {'relaxation: inner damping factor': 0.4464, 'relaxation: sweeps': 2, 'relaxation: type': 'Two-stage Gauss-Seidel'}
+[mySmoother3]  {'relaxation: damping factor': 0.9849, 'relaxation: sweeps': 2, 'relaxation: type': 'Two-stage Gauss-Seidel'}
+[mySmoother4]  {'relaxation: sweeps': 2, 'relaxation: type': 'Two-stage Gauss-Seidel'}
+Populated mesh already exists!
+Test project /home/chkao831/ali-perf-tests/build-cuda/perf_tests/humboldt-3-20km
+    Start 3: humboldt-3-20km_vel_muk_wdg_tune_np1
+1/1 Test #3: humboldt-3-20km_vel_muk_wdg_tune_np1 ...   Passed   49.00 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Label Time Summary:
+tune-gpu    =  49.00 sec*proc (1 test)
+
+Total Test time (real) =  49.05 sec
+
+```
 
 ## \#TODO
 * Research on Bayesian Optimization and GPTune (May 17) <br />
