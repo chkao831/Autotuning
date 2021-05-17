@@ -130,9 +130,9 @@ tune-gpu    =  48.87 sec*proc (1 test)
 
 Total Test time (real) =  48.91 sec
 ```
+### Multi-Smoother Random Search
 
 ## \#TODO
-* Multi-Smoother Random Search (May 17) <br />
 * Research on Bayesian Optimization and GPTune (May 17) <br />
 * Incorporate current infrastructures to real-time data <br />
 * Analyze current searching algo's<br />
