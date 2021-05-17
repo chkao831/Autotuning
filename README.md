@@ -132,7 +132,9 @@ Total Test time (real) =  48.91 sec
 ```
 
 ## \#TODO
-* Multi-Smoother Random Search<br />
-* Research on Bayesian Optimization and GPTune<br />
+* Multi-Smoother Random Search (May 17) <br />
+* Research on Bayesian Optimization and GPTune (May 17) <br />
+* Incorporate current infrastructures to real-time data <br />
 * Analyze current searching algo's<br />
+
 
