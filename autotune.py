@@ -74,7 +74,7 @@ def run_sim(iter, inFile):
       run_bash('ctest -L "pop"')
 
     # Run simulation
-    run_bash('ctest -L "tune" --timeout 60')
+    run_bash('ctest -L "tune-gpu" --timeout 90')
 
     # Generate input file
     newInFile = inFile.split('.')[0] + '_' + str(iter) + '.' + inFile.split('.')[1]
@@ -85,6 +85,90 @@ def run_sim(iter, inFile):
 
 ###############################################################################
 def grid_search(inFile, simu):
+    '''
+    Run experiment with parameter grid -- Grid Search. 
+    Parameters:
+        inFile(file): the input yaml file
+        simu(integer): a nonneg integer that represents the current round of simulation
+    Returns:
+        iter_param_dict(dictionary): {#iter:{parameter_to_change:new_value}} where
+                                     #iter is the unique iter id for each experiment
+    '''
+    # Read input file
+    inputDict = read_yaml(inFile)
+
+    # Extract MueLu dictionary
+    linsolDict = inputDict['ANONYMOUS']['Piro']['NOX']['Direction']['Newton']['Stratimikos Linear Solver']
+    muDict = linsolDict['Stratimikos']['Preconditioner Types']['MueLu']
+
+    # Parameter to change
+    #paramList = muDict['Factories']['mySmoother1']['ParameterList']
+    paramList_1 = muDict['Factories']['mySmoother1']['ParameterList']
+    paramList_3 = muDict['Factories']['mySmoother3']['ParameterList']
+    paramList_4 = muDict['Factories']['mySmoother4']['ParameterList']
+    
+    TYPE = ['Two-stage Gauss-Seidel', 'MT Gauss-Seidel']
+    DAMPING_FACTOR_1 = [0.25, 0.5, 0.75]
+    SWEEP_1 = [1,2]
+    DAMPING_FACTOR_3 = [0.8, 1.0]
+    SWEEP_3 = [1,2]
+    SWEEP_4 = [2,4]
+
+    # Define Grid: np.arange(start[inclusive], stop[exclusive], step)
+    #DAMPING_FACTOR = list(np.arange(0.8, 1.2, 0.002).round(decimals=3))
+    #SWEEPS = list(np.arange(1, 2, 1))
+    param_grid_1 = {'relaxation: type': TYPE,
+                    'relaxation: sweeps': SWEEP_1,
+                    'relaxation: inner damping factor': DAMPING_FACTOR_1
+                   }
+    param_grid_3 = {'relaxation: type': TYPE,
+                    'relaxation: sweeps': SWEEP_3,
+                    'relaxation: damping factor': DAMPING_FACTOR_3
+                   }
+    param_grid_4 = {'relaxation: type': TYPE,
+                    'relaxation: sweeps': SWEEP_4
+                   }
+
+    grid_1 = ParameterGrid(param_grid_1)
+    grid_3 = ParameterGrid(param_grid_3)
+    grid_4 = ParameterGrid(param_grid_4)
+
+    #grid = ParameterGrid(param_grid)
+    #print("TOTAL NUM OF CASES TO BE RUN: {}".format(len(list(grid))))
+    
+    # Run simulations
+    ite = 0 # current #iter id
+    iter_param_dict_1 = dict()
+    iter_param_dict_3 = dict()
+    iter_param_dict_4 = dict()
+    for p1 in grid_1:
+        dic1 = { key:((float)(round(value, 4)) if isinstance(value, float) else value) for key, value in p1.items() }
+        paramList_1.update(dic1)
+        for p3 in grid_3:
+            dic3 = { key:((float)(round(value, 4)) if isinstance(value, float) else value) for key, value in p3.items() }
+            paramList_3.update(dic3)
+            for p4 in grid_4:
+                print('\n')
+                print("########################## CASE {} ##########################".format(ite))
+                dic4 = { key:((float)(round(value, 4)) if isinstance(value, float) else value) for key, value in p4.items() }
+                paramList_4.update(dic4)
+                print("[mySmoother1] ", dic1)
+                print("[mySmoother3] ", dic3)
+                print("[mySmoother4] ", dic4) 
+                write_yaml(inputDict, inFile)
+                run_sim(ite, inFile)
+                iter_param_dict_1.update({str(ite):p1})
+                iter_param_dict_3.update({str(ite):p3})
+                iter_param_dict_4.update({str(ite):p4})
+                ite = ite + 1
+    print('\n')
+    print('######### TOTAL NUM OF CASES IN EACH SIMULATION: {} #########'.format(ite))
+    print('#################### END OF SIMULATION {} ###################'.format(simu))
+    # Convert logs to json
+    run_bash('python ctest2json.py')
+    return iter_param_dict_1, iter_param_dict_3, iter_param_dict_4
+
+def grid_search_old(inFile, simu):
     '''
     Run experiment with parameter grid -- Grid Search. 
     Parameters:
@@ -157,7 +241,9 @@ def get_time_gridsearch(filenames, case, simu, iter_time_dict):
             dat = json.load(f)
             # ensure the test passed to get timer -- otherwise set to arbitrary large
             if dat.get(case, {}).get('passed') is True:
-                time = dat.get(case, {}).get('timers', {}).get('Albany Total Time:')
+                time_linearsolve = dat.get(case, {}).get('timers', {}).get('NOX Total Linear Solve:')
+                time_precondition = dat.get(case, {}).get('timers', {}).get('NOX Total Preconditioner Construction:')
+                time = float(time_linearsolve) + float(time_precondition)
             else:
                 time = float('inf')
             # extract time value and add to dictionary
@@ -256,7 +342,9 @@ def get_time_randomsearch(filenames, case):
             dat = json.load(f)
             # ensure the test passed to get timer -- otherwise set to arbitrary large
             if dat.get(case, {}).get('passed') is True:
-                time = dat.get(case, {}).get('timers', {}).get('Albany Total Time:')
+                time_linearsolve = dat.get(case, {}).get('timers', {}).get('NOX Total Linear Solve:')
+                time_precondition = dat.get(case, {}).get('timers', {}).get('NOX Total Preconditioner Construction:')
+                time = float(time_linearsolve) + float(time_precondition)
             else:
                 time = float('inf')
             # extract time value and add to dictionary
@@ -286,10 +374,53 @@ def get_casename(yamlfile):
     print("CASENAME:", extract)
     return extract
 
-def dict_to_pandas(param_dict, time_dict):
+def transform(count, dic):
+    return { str(count)+'::'+str(key) : (transform(value) if isinstance(value, dict) else value) for key, value in dic.items()}
+
+def copydict(count, dic):
+    new_dict = {}
+    for key, value in dic.items():
+        if type(value) is dict:
+            new_dict[key] = transform(count, value)
+        else:
+            new_dict[key] = value
+    return new_dict
+
+def dict_to_pandas_multi(param_dict_1, param_dict_3, param_dict_4, time_dict):
     '''
     Match and merge two dictionaries (params/time) into one pandas dataframe. 
     The keys for each dictionary, #iter, represent the unique iter id's 
+    for each experiment.
+    Parameters:
+        param_dict(dictionary): {#iter:{parameter_to_change:new_value}}
+        time_dict(dictionary): {#iter:Albany_Total_Time}
+    Returns:
+        df(dataframe): pandas dataframe
+    '''
+    #print(param_dict)
+    #print(time_dict)
+    param_dict_1 = copydict(1, param_dict_1)
+    param_dict_3 = copydict(3, param_dict_3)
+    param_dict_4 = copydict(4, param_dict_4)
+    for key in param_dict_1:
+        if key in param_dict_3:
+            param_dict_1[key].update(param_dict_3[key])
+        if key in param_dict_4:
+            param_dict_1[key].update(param_dict_4[key])
+    for key, val in param_dict_1.items():
+        param_dict_1[key]['time'] = time_dict[key]
+    sorted_dict = sorted(param_dict_1.items(), key = lambda val: (val[1]["time"]))
+    list_to_pd = list()
+    for sorted_dic in sorted_dict:
+        list_to_pd.append(sorted_dic[1])
+    # print(list_to_pd)
+    df = pd.DataFrame.from_dict(list_to_pd)
+    return df
+
+def dict_to_pandas(param_dict, time_dict):
+    '''
+    Match and merge two dictionaries (params/time) into one pandas dataframe.
+    The keys for each dictionary, #iter, represent the unique iter id's
     for each experiment.
     Parameters:
         param_dict(dictionary): {#iter:{parameter_to_change:new_value}}
@@ -337,7 +468,7 @@ if __name__ == "__main__":
     parser.add_argument("filename", type=str,
                     help="YAML input filename (.yaml)")
     parser.add_argument("search", type=str,
-                    help="Searching algorithm (grid/random)")
+                    help="Searching algorithm (grid-single/grid-multi/random)")
     args = parser.parse_args()
     yaml_filename = args.filename
     algo = args.search
@@ -346,7 +477,7 @@ if __name__ == "__main__":
     casename = get_casename(yaml_filename)
 
     # GRID SEARCH
-    if algo == "grid":
+    if algo == "grid-multi":
         num_simu = int(input("#ROUNDS OF SIMULATIONS (integer>=1): "))
         iter_time_dict = dict()
         for i in range(num_simu):
@@ -354,7 +485,7 @@ if __name__ == "__main__":
             # perform grid search
             print('\n')
             print("####################### SIMULATION {} #######################".format(i))
-            iter_param_dict = grid_search(yaml_filename, i)
+            param1, param2, param3 = grid_search(yaml_filename, i)
             # post process: get timers from generated json files
             out_filename = glob.glob('ctest-*.json')
             iter_time_dict = get_time_gridsearch(out_filename, casename, i, iter_time_dict)
@@ -364,7 +495,29 @@ if __name__ == "__main__":
         # round final digits to 4
         iter_time_dict = {k: round(iter_time_dict[k], 4) for k in iter_time_dict}
         #print("FINAL: ", iter_time_dict)
-    # RANDOM SEARCH
+        pd_output = dict_to_pandas_multi(param1, param2, param3, iter_time_dict)
+        
+    else if algo == "grid-single":
+        num_simu = int(input("#ROUNDS OF SIMULATIONS (integer>=1): "))
+        iter_time_dict = dict()
+        for i in range(num_simu):
+            remove_files(yaml_filename)
+            # perform grid search
+            print('\n')
+            print("####################### SIMULATION {} #######################".format(i))
+            param = grid_search_old(yaml_filename, i)
+            # post process: get timers from generated json files
+            out_filename = glob.glob('ctest-*.json')
+            iter_time_dict = get_time_gridsearch(out_filename, casename, i, iter_time_dict)
+            #print("ITER TIME DICT: ", iter_time_dict)
+        # take median of time from all rounds
+        iter_time_dict = {k: statistics.median(time_list) for k, time_list in iter_time_dict.items()}
+        # round final digits to 4
+        iter_time_dict = {k: round(iter_time_dict[k], 4) for k in iter_time_dict}
+        #print("FINAL: ", iter_time_dict)
+        pd_output = dict_to_pandas(param, iter_time_dict)
+    
+    # RANDOM SEARCH SINGLE
     else: 
         remove_files(yaml_filename)
         num_randsearch = int(input("RANDOM SEARCH #ITERS (integer>=1): "))
@@ -374,9 +527,9 @@ if __name__ == "__main__":
         # post process: get timers from generated json files
         out_filename = glob.glob('ctest-*.json')
         iter_time_dict = get_time_randomsearch(out_filename,casename)
-
+        pd_output = dict_to_pandas(param, iter_time_dict)
+        
     # get parameters with corresponding time in ascending order
-    pd_output = dict_to_pandas(iter_param_dict, iter_time_dict)
     print(pd_output)
     csv_out_str = os.path.splitext(yaml_filename)[0] + str('.csv')
     #print(csv_out_str)
