@@ -9,9 +9,6 @@ DAMPING_FACTOR_3 = [0.8, 1.0]
 SWEEP_3 = [1,2]
 SWEEP_4 = [2,4]
 
-# Define Grid: np.arange(start[inclusive], stop[exclusive], step)
-#DAMPING_FACTOR = list(np.arange(0.8, 1.2, 0.002).round(decimals=3))
-#SWEEPS = list(np.arange(1, 2, 1))
 param_grid_1 = {'relaxation: type': TYPE,
                 'relaxation: sweeps': SWEEP_1,
                 'relaxation: inner damping factor': DAMPING_FACTOR_1
