@@ -114,7 +114,7 @@ where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany 
 $ python autotune.py input_albany_Velocity_MueLuKokkos_Wedge_Tune.yaml grid-multi
 
 YAML INPUT FILENAME:  input_albany_Velocity_MueLuKokkos_Wedge_Tune.yaml
-SEARCHING ALGORITHM:  grid
+SEARCHING ALGORITHM:  grid-multi
 CASENAME: humboldt-3-20km_vel_muk_wdg_tune_np1
 #ROUNDS OF SIMULATIONS (integer>=1): 1
 
@@ -142,7 +142,7 @@ Total Test time (real) =  48.91 sec
 ```
 $ python autotune.py input_albany_Velocity_MueLuKokkos_Wedge_Tune.yaml random-multi
 YAML INPUT FILENAME:  input_albany_Velocity_MueLuKokkos_Wedge_Tune.yaml
-SEARCHING ALGORITHM:  random
+SEARCHING ALGORITHM:  random-multi
 CASENAME: humboldt-3-20km_vel_muk_wdg_tune_np1
 RANDOM SEARCH #ITERS (integer>=1): 384
 RANDOM SEARCH SEED (0<=integer<=2**32): 2021
