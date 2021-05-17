@@ -1,6 +1,7 @@
 ## Notes on Running Sample Tests Under Different Architectures 
-### Serial Build
+### CPU Build
 #### k80
+* Serial Build is significantly slower, so we proceed to use k80 CPU build. (May 11)
 ```
 run_bash('ctest -L "tune-cpu" --timeout 60')
 paramList['relaxation: damping factor'] = [0.5, 0.9]
