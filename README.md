@@ -95,9 +95,44 @@ where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany 
 ## May 7 Update
 * GPU Build completed -- [Notes on Running Sample Tests Under Different Architectures](https://github.com/chkao831/Autotuning/blob/main/output/output_0507-notes/testing_architectures.md)<br />
 
+## May 16 Update
+### Multi-Smoother Grid Search
+* Multi-Smoother Grid Search Done -- [autotune.py](https://github.com/chkao831/Autotuning/blob/main/autotune.py)<br />
+  * Experiments are run on V100 GPU<br />
+  * Performances are recorded by `NOX Total Linear Solve + NOX Total Preconditioner Construction`<br />
+* Now available options become `grid-single`, `grid-multi` and `random`, respectively indicate single-smoother grid search, multi-smoother grid search and single-smoother random search. <br />
+* For example,
+```
+$ python autotune.py input_albany_Velocity_MueLuKokkos_Wedge_Tune.yaml grid-multi
+
+YAML INPUT FILENAME:  input_albany_Velocity_MueLuKokkos_Wedge_Tune.yaml
+SEARCHING ALGORITHM:  grid
+CASENAME: humboldt-3-20km_vel_muk_wdg_tune_np1
+#ROUNDS OF SIMULATIONS (integer>=1): 1
+
+
+####################### SIMULATION 0 #######################
+
+
+########################## CASE 0 ##########################
+[mySmoother1]  {'relaxation: inner damping factor': 0.25, 'relaxation: sweeps': 1, 'relaxation: type': 'Two-stage Gauss-Seidel'}
+[mySmoother3]  {'relaxation: damping factor': 0.8, 'relaxation: sweeps': 1, 'relaxation: type': 'Two-stage Gauss-Seidel'}
+[mySmoother4]  {'relaxation: sweeps': 2, 'relaxation: type': 'Two-stage Gauss-Seidel'}
+Populated mesh already exists!
+Test project /home/chkao831/ali-perf-tests/build-cuda/perf_tests/humboldt-3-20km
+    Start 3: humboldt-3-20km_vel_muk_wdg_tune_np1
+1/1 Test #3: humboldt-3-20km_vel_muk_wdg_tune_np1 ...   Passed   48.87 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Label Time Summary:
+tune-gpu    =  48.87 sec*proc (1 test)
+
+Total Test time (real) =  48.91 sec
+```
+
 ## \#TODO
-* Running experiments and testing codes on CPU/GPU<br />
-  * Start to record `NOX Total Linear Solve + NOX Total Preconditioner Construction` <br />
-  * Try out `inner damping factor` and `relaxation: type` across smoothers<br />
-* Analyses on current searching algo<br />
-* Research on some advanced optimizations<br />
+* Multi-Smoother Random Search<br />
+* Research on Bayesian Optimization and GPTune<br />
+* Analyze current searching algo's<br />
+
