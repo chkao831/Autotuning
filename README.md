@@ -96,6 +96,7 @@ where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany 
 * GPU Build completed -- [Notes on Running Sample Tests Under Different Architectures](https://github.com/chkao831/Autotuning/blob/main/output/output_0507-notes/testing_architectures.md)<br />
 
 ## May 16 Update
+* Handled wrong command line input arguments with exceptions.<br />
 ### Multi-Smoother Grid Search
 * Multi-Smoother Grid Search Done ([autotune.py](https://github.com/chkao831/Autotuning/blob/main/autotune.py))<br />
   * [Sample outputs](https://github.com/chkao831/Autotuning/tree/main/output/output_0516-0)<br />
