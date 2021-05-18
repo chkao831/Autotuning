@@ -104,7 +104,7 @@ where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany 
   * Performances are recorded by `NOX Total Linear Solve + NOX Total Preconditioner Construction`<br />
 ### Multi-Smoother Random Search
 * Multi-Smoother Random Search Done ([autotune.py](https://github.com/chkao831/Autotuning/blob/main/autotune.py))<br />
-  * Sample outputs (TBD)<br />
+  * [Sample outputs](https://github.com/chkao831/Autotuning/tree/main/output/output_0517-0)<br />
   * Experiments are run on V100 GPU<br />
   * Performances are recorded by `NOX Total Linear Solve + NOX Total Preconditioner Construction`<br />
  
