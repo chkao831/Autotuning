@@ -95,7 +95,7 @@ where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany 
 ## May 7 Update
 * GPU Build completed -- [Notes on Running Sample Tests Under Different Architectures](https://github.com/chkao831/Autotuning/blob/main/output/output_0507-notes/testing_architectures.md)<br />
 
-## May 16 Update
+## May 16-17 Update
 * Handled wrong command line input arguments with exceptions.<br />
 ### Multi-Smoother Grid Search
 * Multi-Smoother Grid Search Done ([autotune.py](https://github.com/chkao831/Autotuning/blob/main/autotune.py))<br />
@@ -104,7 +104,7 @@ where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany 
   * Performances are recorded by `NOX Total Linear Solve + NOX Total Preconditioner Construction`<br />
 ### Multi-Smoother Random Search
 * Multi-Smoother Random Search Done ([autotune.py](https://github.com/chkao831/Autotuning/blob/main/autotune.py))<br />
-  * Sample outputs<br />
+  * Sample outputs (TBD)<br />
   * Experiments are run on V100 GPU<br />
   * Performances are recorded by `NOX Total Linear Solve + NOX Total Preconditioner Construction`<br />
  
@@ -168,8 +168,8 @@ Total Test time (real) =  49.05 sec
 ```
 
 ## \#TODO
-* Research on Bayesian Optimization and GPTune (May 17) <br />
-* Incorporate current infrastructures to real-time data <br />
+* Research & Discussion on Bayesian Optimization and GPTune (Week 8) <br />
+* Incorporate current infrastructures to real-time data (Week 8) <br />
 * Analyze current searching algo's<br />
 
 
