@@ -16,7 +16,7 @@ The 4th argument `humboldt-3-20km_vel_muk_wdg_tune_np1` specifies the case to be
 
 #### Note:
 * If the casename (4th argv) cannot be found from the json output file (3rd argv), a `ValueError: The casename is not found in the ctest output file` would be generated. 
-* For the first run (iteration 0), where the \_hist.csv file is not yet generated, the 3rd and 4th argument would be useless, since there's no output yet. 
+* For the first run (iteration 0), where the [casename]\_hist.csv file is not yet generated, the 3rd and 4th argument would be useless, since there's no output yet. 
 * The parameter constraints for random search are specified in `_properties.json` file in the same directory. 
 * If `_properties.json` could not be opened, an IOError would be thrown. 
 
@@ -29,9 +29,9 @@ chkao831@icme-gpu:~/ali-perf-tests/build-cuda/perf_tests/humboldt-3-20km$ python
 0        0                               1.0847                      2     MT Gauss-Seidel  Two-stage Gauss-Seidel                      3     None             None   None
 
 ```
-By the end of the first iteration, a history file (in csv format) is created and the above information is written to file. Meanwhile, the input file `input_albany_Velocity_MueLuKokkos_Wedge_Tune.yaml` is updated, along with a copy of it, called `input_albany_Velocity_MueLuKokkos_Wedge_Tune_0.yaml`. 
+By the end of the first iteration, a history file `[casename]_hist.csv` is created and the above information is written to file. Meanwhile, the input file `input_albany_Velocity_MueLuKokkos_Wedge_Tune.yaml` is updated, along with a copy of it, called `input_albany_Velocity_MueLuKokkos_Wedge_Tune_0.yaml`. 
 #### Iteration: 1
-Then, for the next-day iteration, given that the history file exists, an output json file should have been generated based on the updated input file. 
+Then, for the next-day iteration, given that the history file preexists, an output ctest json file should have been generated based on the previously-updated input file. 
 ```
 chkao831@icme-gpu:~/ali-perf-tests/build-cuda/perf_tests/humboldt-3-20km$ python3 autotune_nightly.py input_albany_Velocity_MueLuKokkos_Wedge.yaml ctest-20210521.json humboldt-3-20km_vel_muk_wdg_tune_np1
 
