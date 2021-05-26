@@ -108,11 +108,10 @@ def random_search(inFile, iter_id, properties_file):
     iter_param_dict_4 = dict()
     
     for i in range(len(param_1)):
-        print('\n')
         paramList_1.update(param_1[i])
-        print("[mySmoother1] ", param_1[i])
+        #print("[mySmoother1] ", param_1[i])
         paramList_4.update(param_4[i])
-        print("[mySmoother4] ", param_4[i])
+        #print("[mySmoother4] ", param_4[i])
 
         write_yaml(inputDict, inFile)
         #run_sim(i, inFile)
