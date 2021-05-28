@@ -11,7 +11,7 @@ optional arguments:
   -h, --help         show this help message and exit
 ```
 
-### User Guide: [https://github.com/chkao831/Autotuning/blob/main/autotune_nightly/autotune_nightly_py_usage_guide.pdf](autotune_nightly_py_usage_guide.pdf)
-### Simulation Example: Page [https://github.com/chkao831/Autotuning/blob/main/autotune_nightly/autotune_nightly_py_usage_guide.pdf](7) of the User Guide
+### User Guide: [autotune_nightly_py_usage_guide.pdf](https://github.com/chkao831/Autotuning/blob/main/autotune_nightly/autotune_nightly_py_usage_guide.pdf)
+### Simulation Example: Page [7](https://github.com/chkao831/Autotuning/blob/main/autotune_nightly/autotune_nightly_py_usage_guide.pdf) of the User Guide
 
 *All relevant files are uploaded to the folder `autotune_nightly`.*
