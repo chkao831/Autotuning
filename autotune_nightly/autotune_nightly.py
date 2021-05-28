@@ -99,7 +99,7 @@ def paramdict_generator(mySmoother, mS_type, properties_file):
                 degree = dic_prop[mySmoother]['chebyshev: degree']
                 DEGREE = list(range(degree['inclusive_lower_bound'], degree['inclusive_upper_bound']+1))
                 ratio_eval = dic_prop[mySmoother]['chebyshev: ratio eigenvalue']
-                RATIO_EVAL = list(range(ratio_eval['inclusive_lower_bound'], ratio_eval['inclusive_upper_bound']+1))
+                RATIO_EVAL = get_truncated_normal(ratio_eval['mean'], ratio_eval['sd'], ratio_eval['low'], ratio_eval['upper'])
                 eval_maxit = dic_prop[mySmoother]['chebyshev: eigenvalue max iterations']
                 EVAL_MAXIT = list(range(eval_maxit['inclusive_lower_bound'], eval_maxit['inclusive_upper_bound']+1))
         except IOError:
