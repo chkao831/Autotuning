@@ -1,0 +1,6 @@
+iter_id,1::relaxation: type,1::relaxation: sweeps,1::relaxation: damping factor,1::relaxation: inner damping factor,4::relaxation: type,4::relaxation: sweeps,4::relaxation: inner damping factor,4::chebyshev: degree,4::chebyshev: ratio eigenvalue,4::chebyshev: eigenvalue max iterations,time_NOX,time_AlbanyTotal,passed
+3,Two-stage Gauss-Seidel,1,,0.9386,,,,5.0,49.0,29.0,12.28761,31.3359,True
+0,MT Gauss-Seidel,1,1.0594,,,,,4.0,11.0,97.0,13.490470000000002,34.1335,True
+1,MT Gauss-Seidel,2,0.9559,,Two-stage Gauss-Seidel,2.0,0.9995,,,,13.609020000000001,34.4281,True
+2,MT Gauss-Seidel,2,0.9475,,,,,1.0,39.0,8.0,14.03035,33.1238,True
+4,MT Gauss-Seidel,1,0.9031,,Two-stage Gauss-Seidel,2.0,0.9363,,,,,,

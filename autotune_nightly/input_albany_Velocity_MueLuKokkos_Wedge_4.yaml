@@ -322,15 +322,15 @@ ANONYMOUS:
                       type: RELAXATION
                       'smoother: pre or post': both
                       ParameterList:
-                        'relaxation: damping factor': 0.9559
-                        'relaxation: sweeps': 2
+                        'relaxation: damping factor': 0.9031
+                        'relaxation: sweeps': 1
                         'relaxation: type': MT Gauss-Seidel
                     mySmoother4:
                       factory: TrilinosSmoother
                       type: RELAXATION
                       'smoother: pre or post': pre
                       ParameterList:
-                        'relaxation: inner damping factor': 0.9995
+                        'relaxation: inner damping factor': 0.9363
                         'relaxation: sweeps': 2
                         'relaxation: type': Two-stage Gauss-Seidel
                   Hierarchy:
