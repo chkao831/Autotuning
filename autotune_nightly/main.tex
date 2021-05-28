@@ -1,0 +1,257 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{appendix}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\definecolor{verde}{rgb}{0.25,0.5,0.35}
+\definecolor{jpurple}{rgb}{0.5,0,0.35}
+\definecolor{darkgreen}{rgb}{0.0, 0.2, 0.13}
+
+
+\newcommand{\pythoncodeblock}{
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{jpurple}\bfseries,
+    stringstyle=\color{black},
+    commentstyle=\color{verde},
+    morecomment=[s][\color{blue}]{/**}{*/},
+    extendedchars=true,
+    showspaces=false,
+    showstringspaces=false,
+    numbers=left,
+    numberstyle=\tiny,
+    breaklines=true,
+    backgroundcolor=\color{gray!10},
+    breakautoindent=true,
+    captionpos=b,
+    xleftmargin=0pt,
+    tabsize=2
+}}
+
+\title{User Guide for autotune\_nightly.py}
+\author{Carolyn Kao (chkao831@stanford.edu)\\
+Mentors: Jerry Watkins \& Irina Tezaur (Sandia Nat'l Labs) }
+
+\begin{document}
+\maketitle
+
+%\begin{abstract}
+%\end{abstract}
+
+\section{Program Description}
+\begin{itemize}
+  \item This script currently serves as part of the scripts that are running on a nightly basis for post-processing\footnote{The real-time nightly tests produce a ctest json file that locates at either here: \url{https://github.com/ikalash/ikalash.github.io/tree/master/ali/blake_nightly_data} (CPU) or \url{https://github.com/ikalash/ikalash.github.io/tree/master/ali/weaver_nightly_data} (GPU)}. Its primary purposes are to run an optimization algorithm, update an input file and record history so that the next nightly test will run a new iteration based on the updated input file. The corresponding outputs (timers, etc.) would be automatically extracted and recorded to the history file the next time calling this script, along with new input information for the next nightly test. 
+  \item This version utilizes random search in regards to the choice of parameters, i.e. each iteration is completely random from the previous ones.
+  \item The current infrastructure focuses on tuning parameters from the \texttt{ParameterList} for two \texttt{mySmoother}s. 
+  \item Codes and relevant files are available at \url{https://github.com/chkao831/Autotuning/tree/main/autotune_nightly}
+\end{itemize}
+
+\section{Parameter Space}
+We currently focus on tuning parameters for two \texttt{mySmoother}s at a time. The input files are multiple-level nested YAML files, in which \texttt{mySmoother}s are represented in the form of 
+\begin{scriptsize}
+\pythoncodeblock
+\begin{lstlisting}
+mySmoother1:
+    factory: 
+    type: [TUNING FOCUS]
+    'smoother: pre or post': 
+    ParameterList: [TUNING FOCUS]
+mySmoother4:
+    factory: 
+    type: [TUNING FOCUS]
+    'smoother: pre or post': 
+    ParameterList: [TUNING FOCUS]
+\end{lstlisting}
+\end{scriptsize}
+The options that we enable for each smoothers are the following,
+\begin{scriptsize}
+\pythoncodeblock
+\begin{lstlisting} 
+
+type: RELAXATION
+ParameterList:
+    'relaxation: type': MT Gauss-Seidel
+    'relaxation: sweeps': positive integer
+    'relaxation: damping factor': positive real number
+    
+type: RELAXATION
+ParameterList:
+    'relaxation: type': Two-stage Gauss-Seidel
+    'relaxation: sweeps': positive integer
+    'relaxation: inner damping factor': positive real number
+    
+type: CHEBYSHEV
+ParameterList:
+    'chebyshev: degree': positive integer
+    'chebyshev: ratio eigenvalue': positive real number
+    'chebyshev: eigenvalue max iterations': positive integer
+\end{lstlisting}
+\end{scriptsize}
+
+\section{User Interface}
+The user would need to specify the input filename, the casename, the optimization algorithm, and the possible choices with ranges for each smoother in a file. A snapshot of a sample file called \texttt{\_properties.json} follows,
+\begin{scriptsize}
+\pythoncodeblock
+\begin{lstlisting}
+ "input": "input_albany_Velocity_MueLuKokkos_Wedge.yaml",
+ "case": "humboldt-3-20km_vel_muk_wdg_tune_np1",
+ "algorithm": "random_search",
+ "mS1": {
+     "type_options": ["Two-stage Gauss-Seidel", "MT Gauss-Seidel"], # CHEBYSHEV is disabled for mS1
+     "relaxation: sweeps": {
+         "inclusive_lower_bound": 1,
+         "inclusive_upper_bound": 2
+     },
+     "relaxation: damping factor": { 
+     # for MT Gauss-Seidel
+             "mean": 1,
+             "sd": 0.1,
+             "low": 0.8,
+             "upper": 1.2
+     },
+     "relaxation: inner damping factor": { 
+     # for Two-stage Gauss-Seidel
+             "mean": 1,
+             "sd": 0.1,
+             "low": 0.8,
+             "upper": 1.2
+     },
+     "chebyshev: degree": { 
+     # since CHEBYSHEV is disabled for mS1, this is not used
+             "inclusive_lower_bound": 1,
+             "inclusive_upper_bound": 6
+     },
+     "chebyshev: ratio eigenvalue": { 
+     # not used
+             "inclusive_lower_bound": 10,
+             "inclusive_upper_bound": 50
+     },
+     "chebyshev: eigenvalue max iterations": { 
+     # not used
+             "inclusive_lower_bound": 5,
+             "inclusive_upper_bound": 100
+     }
+ }
+ # "mS4" omitted due to the space constraint
+\end{lstlisting}
+\end{scriptsize}
+Note that on \texttt{line 5}, only two types are listed -- \texttt{type: CHEBYSHEV} is disabled for \texttt{mySmoother1}. Hence, the information from \texttt{line 24-38} is not used (although they could still be listed). That being said, the user could also open up all three choices or simply enable only one choice.  \\
+\\
+If the specified \texttt{type\_options} in the \texttt{\_properties.json} file contains some string other than \texttt{["Two-stage Gauss-Seidel", "MT Gauss-Seidel", "CHEBYSHEV"]}, a \texttt{ ValueError("Type options are not defined by MT Gauss-Seidel, Two-stage Gauss-Seidel or CHEBYSHEV")} would be raised.\\
+\\
+In terms of the range, 
+\texttt{inclusive\_lower\_bound} and \texttt{inclusive\_upper\_bound} define the range for integers within \texttt{[inclusive\_lower\_bound, inclusive\_upper\_bound]}, inclusively. \\
+\\
+In addition, \texttt{mean}, \texttt{sd}, \texttt{low}, and \texttt{upper} define the range for real numbers derived from that of a normally distributed continuous random variable, truncated to the range [\texttt{low}, \texttt{upper}], with distribution mean and standard deviation of \texttt{mean} and \texttt{sd} respectively. 
+
+\section{Prerequisites}
+In addition to the properties file such as \texttt{\_properties.json}, under the working directory, one needs
+\begin{itemize}
+    \item An input yaml file that is listed in \texttt{\_properties.json}
+    \item{ctest output files, starting from the second run}
+    \item to pip install \texttt{pandas, ruamel.yaml, and scikit-learn}
+    
+\end{itemize}
+
+\section{Command Line Usage}
+
+\begin{scriptsize}
+\pythoncodeblock
+\begin{lstlisting}
+$ python3 autotune_nightly.py --help
+usage: autotune_nightly.py [-h] properties_file ctest_output_file
+
+positional arguments:
+  properties_file    parameter space definition (.json)
+  ctest_output_file  ctest output filename (.json)
+
+optional arguments:
+  -h, --help         show this help message and exit
+
+\end{lstlisting}
+\end{scriptsize}
+
+For example, with\\ \texttt{\$ python3 autotune\_nightly.py \_properties.json  ctest-20210520.json}, the 2nd argument \texttt{\_properties.json} points to the properties file; the 3rd argument \texttt{ctest-20210520.json} specifies the output file from which the output information (such as timers) are extracted for evaluation. \\
+\\
+However, for the first iteration of this script (\texttt{\#iter\_id}=0), the ctest argument is useless, as there's no nightly test run yet. In this case, the user could input any filename with .json extension to this required argument, but whatever it is, the argument would not be used. \\
+\\
+If the specified \texttt{case} in the \texttt{\_properties.json} file cannot be found from the ctest output file that is called in command line, a \texttt{ ValueError: The casename is not found in the ctest output file} would be raised.
+
+
+\section{Simulation}
+For the first run (\texttt{\#iter\_id}=0), as there's no history file available, the script would simply update the input yaml file with a set of updated parameters by the optimization algorithm. By the end of this iteration, a history file \texttt{[case]\_hist.csv} is created and the updated input parameters are written to file. Meanwhile, a copy of the input yaml file is saved, called \texttt{[input]\_0.yaml}, where \texttt{input} corresponds to the yaml filename from \texttt{\_properties.json} and \texttt{0} specifies the \texttt{\#iter\_id}. An example is as follows,
+\begin{scriptsize}
+\pythoncodeblock
+\begin{lstlisting}
+$ python3 autotune_nightly.py _properties.json any_name.json
+\end{lstlisting}
+\end{scriptsize}
+\begin{figure}[H]
+\includegraphics[scale=0.35]{iter0_new.png}
+\centering
+\end{figure}
+A dataframe is printed to the command line, as illustrated above. The last three entries, \texttt{time\_NOX, time\_AlbanyTotal} and \texttt{passed}, are temporarily set to \texttt{None} by the end of this iteration, since no nightly test is run yet. \\
+\\
+\texttt{time\_NOX} is defined as \texttt{NOX Total Linear Solve + NOX Total Preconditioner Construction}.  \texttt{time\_AlbanyTotal} is the \texttt{Albany Total Time} from the ctest output file. \\
+\\
+Then, for the next-day iteration, given that the history file \texttt{[case]\_hist.csv} preexists, an output ctest json file should have been generated based on the previously-updated input file. As an example, let the output ctest file be \texttt{ctest-20210520.json},
+\begin{scriptsize}
+\pythoncodeblock
+\begin{lstlisting}
+$ python3 autotune_nightly.py _properties.json ctest-20210520.json
+\end{lstlisting}
+\end{scriptsize}
+\begin{figure}[H]
+\includegraphics[scale=0.35]{iter1_new.png}
+\centering
+\end{figure}
+From the first row of the dataframe, we could see that the timer data and a boolean that indicates test pass/fail of iteration 0 is extracted from \texttt{ctest-20210520.json}. At the same time, the updated input parameters are generated for the next round of nightly test. \\
+\\
+This is repeated on a nightly basis.
+
+\section{Deliverables}
+\subsection{[case]\_hist.csv}
+Starting from the first run (\texttt{\#iter\_id}=0), a history file in csv format would be generated. The iteration id, updated input parameters, and corresponding output results are written to the file. \\
+\\
+If the ctest does not pass for an experiment, the value of \texttt{inf} would be put to \texttt{time\_NOX} and \texttt{time\_AlbanyTotal} because not timer data is available for evaluation. In such cases, \texttt{passed = FALSE}.
+\begin{figure}[H]
+\includegraphics[scale=0.35]{csv_new.png}
+\centering
+\caption{(Example) humboldt-3-20km\_vel\_muk\_wdg\_tune\_np1\_hist.csv}
+\end{figure}
+\subsection{[case]\_hist\_sorted.csv}
+Starting from the second run (\texttt{\#iter\_id}=1), a history file in csv format would be generated. It contains the same information as \texttt{[case]\_hist.csv} does, except that it differs in row order -- instead of ordering by \texttt{\#iter\_id}=0, 1, 2..., the experiments are sorted in ascending order by \texttt{time\_NOX}. 
+\begin{figure}[H]
+\includegraphics[scale=0.35]{csv_sorted_new.png}
+\centering
+\caption{(Example) humboldt-3-20km\_vel\_muk\_wdg\_tune\_np1\_hist\_sorted.csv}
+\end{figure}
+From here, we see that the experiment with \texttt{\#iter\_id=3} achieves the best performance in terms of \texttt{time\_NOX(=12.28761)}. 
+\subsection{[input]\_Best.yaml}
+At every iteration, we have checked to see if the current iteration is better than all past iterations. If true, we update \texttt{[input]\_Best.yaml} with the inputs from the current iteration.\\
+\\
+To verify that the output matches, 
+\begin{scriptsize}
+\pythoncodeblock
+\begin{lstlisting}
+diff  input_albany_Velocity_MueLuKokkos_Wedge_3.yaml input_albany_Velocity_MueLuKokkos_Wedge_Best.yaml
+\end{lstlisting}
+\end{scriptsize}
+This displays no difference in both files. 
+
+\newpage
+\appendix
+\section{Complete Command Line Sample}
+\begin{figure}[H]
+\includegraphics[scale=0.45]{fullcommands_new.png}
+\centering
+\end{figure}
+\end{document}
