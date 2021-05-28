@@ -1,5 +1,0 @@
-iter_id,1::relaxation: inner damping factor,1::relaxation: sweeps,1::relaxation: type,4::relaxation: type,4::relaxation: sweeps,time_NOX,time_AlbanyTotal,passed
-0,1.0847,2,MT Gauss-Seidel,Two-stage Gauss-Seidel,3,13.609020000000001,34.4281,True
-1,1.0678,2,Two-stage Gauss-Seidel,MT Gauss-Seidel,4,inf,inf,False
-2,0.91,1,MT Gauss-Seidel,MT Gauss-Seidel,4,13.49047,34.1335,True
-3,1.158,1,MT Gauss-Seidel,MT Gauss-Seidel,3,,,
