@@ -97,12 +97,12 @@ where the resulting time above (`12.3668, 12.5056,` etc.) illustrate the Albany 
 
 ## May 16-17 Update
 * Handled wrong command line input arguments with exceptions.<br />
-### Multi-Smoother Grid Search
+### Multi-Smoother Grid Search [LEVEL: 3 Smoothers]
 * Multi-Smoother Grid Search Done ([autotune.py](https://github.com/chkao831/Autotuning/blob/main/autotune.py))<br />
   * [Sample outputs](https://github.com/chkao831/Autotuning/tree/main/output/output_0516-0)<br />
   * Experiments are run on V100 GPU<br />
   * Performances are recorded by `NOX Total Linear Solve + NOX Total Preconditioner Construction`<br />
-### Multi-Smoother Random Search
+### Multi-Smoother Random Search [LEVEL: 3 Smoothers]
 * Multi-Smoother Random Search Done ([autotune.py](https://github.com/chkao831/Autotuning/blob/main/autotune.py))<br />
   * [Sample outputs](https://github.com/chkao831/Autotuning/tree/main/output/output_0517-0)<br />
   * Experiments are run on V100 GPU<br />
@@ -168,7 +168,7 @@ Total Test time (real) =  49.05 sec
 ```
 ## Week 9 Update
 * Incorporated random search to real-time data at `autotune_nightly.py`<br />
-* To increase code readability, `autotune.py` is now separated into two files: `autotune_grid.py` and `autotune_random.py` without major changes in functionality.
+* To increase code readability, `autotune.py` is now separated into two files: `autotune_grid.py` and `autotune_random.py` without major changes in functionality [LEVEL for 'multiple' option: 2 Smoothers].
 
 ## \#TODO
 * Analyze current searching algo's for final presentation and report.<br />
