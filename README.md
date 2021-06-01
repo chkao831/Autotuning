@@ -172,5 +172,6 @@ Total Test time (real) =  49.05 sec
 
 ## \#TODO
 * Analyze current searching algo's for final presentation and report.<br />
+* Code cleanup and organization.<br />
 
 
