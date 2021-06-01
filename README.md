@@ -166,10 +166,11 @@ tune-gpu    =  49.00 sec*proc (1 test)
 Total Test time (real) =  49.05 sec
 
 ```
+## Week 9 Update
+* Incorporated random search to real-time data at `autotune_nightly.py`<br />
+* To increase code readability, `autotune.py` is now separated into two files: `autotune_grid.py` and `autotune_random.py` without major changes in functionality.
 
 ## \#TODO
-* Research & Discussion on Bayesian Optimization and GPTune (Week 8) <br />
-* Incorporate current infrastructures to real-time data (Week 8) <br />
-* Analyze current searching algo's<br />
+* Analyze current searching algo's for final presentation and report.<br />
 
 
