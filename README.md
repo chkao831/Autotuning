@@ -170,8 +170,8 @@ Total Test time (real) =  49.05 sec
 * Incorporated random search to real-time data at `autotune_nightly.py`<br />
 * To increase code readability, `autotune.py` is now separated into two files: `autotune_grid.py` and `autotune_random.py` without major changes in functionality [LEVEL for 'multiple' option: 2 Smoothers].
 
-## \#TODO
-* Analyze current searching algo's for final presentation and report.<br />
-* Code cleanup and organization.<br />
+## \#TODO for Week 10
+* Final Report/Presentation with selected output and analyses.<br />
+* Code cleanup and final organization.<br />
 
 
